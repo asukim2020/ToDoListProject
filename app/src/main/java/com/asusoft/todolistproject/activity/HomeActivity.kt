@@ -1,4 +1,4 @@
-package com.asusoft.todolistproject
+package com.asusoft.todolistproject.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
