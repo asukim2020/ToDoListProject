@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.asusoft.todolistproject.application.ItemApplication
 import com.asusoft.todolistproject.databinding.ActivityToDoItemBinding
+import com.asusoft.todolistproject.realm.dto.ToDoItemDto
 import com.asusoft.todolistproject.recyclerview.RecyclerViewAdapter
 import io.realm.Realm
 
@@ -23,9 +24,10 @@ class ToDoItemActivity : AppCompatActivity() {
         realm = Realm.getInstance(ItemApplication.getRealmConfig())
 
         val list = ArrayList<Any>()
-        list.add(1)
-        list.add(2)
-        list.add(3)
+        list.add(ToDoItemDto("title", false))
+        list.add(ToDoItemDto("title", false))
+        list.add(ToDoItemDto("title", false))
+        list.add("항목추가")
 
         adapter = RecyclerViewAdapter(this, list)
         binding.recyclerView.layoutManager = LinearLayoutManager(baseContext)

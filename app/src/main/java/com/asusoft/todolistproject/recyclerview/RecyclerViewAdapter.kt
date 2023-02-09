@@ -2,11 +2,15 @@ package com.asusoft.todolistproject.recyclerview
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.asusoft.todolistproject.R
+import com.asusoft.todolistproject.realm.dto.ToDoItemDto
 import com.asusoft.todolistproject.recyclerview.RecyclerViewType.*
+import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemAddHolder
 import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemHolder
+import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemType
 
 class RecyclerViewAdapter(
     typeObject: Any,
@@ -23,14 +27,22 @@ class RecyclerViewAdapter(
         val context = parent.context
         val inflater = LayoutInflater.from(context)
 
-        return when(type) {
+        when(type) {
             TO_DO_ITEM -> {
-                Log.d(TAG, "onCreateViewHolder(): $TO_DO_ITEM")
-                val view = inflater.inflate(R.layout.item_to_do_default, parent, false)
-                ToDoItemHolder(view)
+                when(viewType) {
+                    ToDoItemType.ITEM.value -> {
+                        val view = inflater.inflate(R.layout.item_to_do_default, parent, false)
+                        return ToDoItemHolder(view)
+                    }
+                    ToDoItemType.ADD.value -> {
+                        val view = inflater.inflate(R.layout.item_to_do_add, parent, false)
+                        return ToDoItemAddHolder(view)
+                    }
+                }
             }
         }
 
+        return EmptyViewHolder(View(context))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -53,7 +65,11 @@ class RecyclerViewAdapter(
 
         return when(type) {
             TO_DO_ITEM -> {
-                0
+                when(item) {
+                    is ToDoItemDto -> ToDoItemType.ITEM.value
+                    is String -> ToDoItemType.ADD.value
+                    else -> 999
+                }
             }
         }
 
