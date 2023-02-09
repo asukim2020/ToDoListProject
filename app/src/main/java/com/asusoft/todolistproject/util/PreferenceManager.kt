@@ -2,7 +2,7 @@ package com.asusoft.todolistproject.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.asusoft.todolistproject.application.Application
+import com.asusoft.todolistproject.application.ItemApplication
 
 /**
  *
@@ -18,9 +18,9 @@ object PreferenceManager {
     const val DEFAULT_VALUE_LONG = -1L
     const val DEFAULT_VALUE_FLOAT = -1f
 
-    lateinit var context: Application
+    lateinit var context: ItemApplication
 
-    fun setApplicationContext(context: Application) {
+    fun setApplicationContext(context: ItemApplication) {
         this.context = context
     }
 

@@ -5,18 +5,19 @@ import io.realm.RealmModel
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
+import io.realm.kotlin.deleteFromRealm
 
 @RealmClass
 open class ToDoItem: RealmModel {
 
     @PrimaryKey
-    val key: Long = System.currentTimeMillis()
+    var key: Long = System.currentTimeMillis()
 
     var title: String = ""
     var isComplete: Boolean = false
     var order: Long = System.currentTimeMillis()
 
-    private constructor() : super()
+    constructor() : super()
     private constructor(title: String, isComplete: Boolean) : super() {
         this.title = title
         this.isComplete = isComplete
@@ -38,6 +39,12 @@ open class ToDoItem: RealmModel {
     fun updateOrder(realm: Realm, order: Long) {
         realm.beginTransaction()
         this.order = order
+        realm.commitTransaction()
+    }
+
+    fun delete(realm: Realm) {
+        realm.beginTransaction()
+        this.deleteFromRealm()
         realm.commitTransaction()
     }
 
