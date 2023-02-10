@@ -5,9 +5,14 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.asusoft.todolistproject.application.ItemApplication
 import com.asusoft.todolistproject.databinding.ActivityToDoItemBinding
+import com.asusoft.todolistproject.eventbus.GlobalBus
 import com.asusoft.todolistproject.realm.dto.ToDoItemDto
 import com.asusoft.todolistproject.recyclerview.RecyclerViewAdapter
+import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemAddHolder
 import io.realm.Realm
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import java.util.HashMap
 
 class ToDoItemActivity : AppCompatActivity() {
 
@@ -34,8 +39,30 @@ class ToDoItemActivity : AppCompatActivity() {
         binding.recyclerView.adapter = adapter
     }
 
+    override fun onStart() {
+        super.onStart()
+        GlobalBus.register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        GlobalBus.unregister(this)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public fun onEvent(event: HashMap<String, Any>) {
+
+        when {
+            event[ToDoItemAddHolder::class.java.simpleName] != null -> {
+                
+            }
+            else -> {}
+        }
+
     }
 }
