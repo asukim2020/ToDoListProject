@@ -1,5 +1,6 @@
 package com.asusoft.todolistproject.recyclerview.todoitem
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.asusoft.todolistproject.eventbus.GlobalBus
@@ -19,6 +20,7 @@ class ToDoItemAddHolder(
     }
 
     private fun addToDoItem() {
+        Log.d(TAG, "addToDoItem()")
         val map = HashMap<String, Any>()
         map[TAG] = TAG
         GlobalBus.post(map)

@@ -3,6 +3,7 @@ package com.asusoft.todolistproject.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.asusoft.todolistproject.R
 import com.asusoft.todolistproject.application.ItemApplication
 import com.asusoft.todolistproject.databinding.ActivityToDoItemBinding
 import com.asusoft.todolistproject.eventbus.GlobalBus
@@ -32,7 +33,7 @@ class ToDoItemActivity : AppCompatActivity() {
         list.add(ToDoItemDto("title", false))
         list.add(ToDoItemDto("title", false))
         list.add(ToDoItemDto("title", false))
-        list.add("항목추가")
+        list.add(getString(R.string.add_item))
 
         adapter = RecyclerViewAdapter(this, list)
         binding.recyclerView.layoutManager = LinearLayoutManager(baseContext)
@@ -59,8 +60,11 @@ class ToDoItemActivity : AppCompatActivity() {
 
         when {
             event[ToDoItemAddHolder::class.java.simpleName] != null -> {
-                
+                val index = adapter.list.indexOf(getString(R.string.add_item))
+                adapter.list.add(index, ToDoItemDto("title", false))
+                adapter.notifyItemInserted(index)
             }
+
             else -> {}
         }
 
