@@ -9,9 +9,11 @@ import com.asusoft.todolistproject.recyclerview.ViewHolderInterface
 import org.greenrobot.eventbus.EventBus
 
 class ToDoItemAddHolder(
-    val view: View
+    private val view: View
 ): RecyclerView.ViewHolder(view), ViewHolderInterface {
-    var TAG = ToDoItemAddHolder::class.java.simpleName
+    companion object {
+        var TAG = ToDoItemAddHolder::class.java.simpleName ?: "ToDoItemAddHolder"
+    }
 
     override fun bind(item: Any) {
         view.onClick {

@@ -10,6 +10,7 @@ import com.asusoft.todolistproject.eventbus.GlobalBus
 import com.asusoft.todolistproject.realm.dto.ToDoItemDto
 import com.asusoft.todolistproject.recyclerview.RecyclerViewAdapter
 import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemAddHolder
+import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemHolder
 import io.realm.Realm
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -59,10 +60,18 @@ class ToDoItemActivity : AppCompatActivity() {
     public fun onEvent(event: HashMap<String, Any>) {
 
         when {
-            event[ToDoItemAddHolder::class.java.simpleName] != null -> {
+            event[ToDoItemAddHolder.TAG] != null -> {
                 val index = adapter.list.indexOf(getString(R.string.add_item))
                 adapter.list.add(index, ToDoItemDto("title", false))
                 adapter.notifyItemInserted(index)
+            }
+
+            event[ToDoItemHolder.TAG] != null -> {
+                // TODO: - index 조절 필요
+                val index = event["index"] as Int
+                val removeAt = adapter.list.removeAt(index) as ToDoItemDto
+                adapter.list.add(removeAt)
+                adapter.notifyDataSetChanged()
             }
 
             else -> {}
