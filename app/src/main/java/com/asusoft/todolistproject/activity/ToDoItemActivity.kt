@@ -67,13 +67,23 @@ class ToDoItemActivity : AppCompatActivity() {
             }
 
             event[ToDoItemHolder.TAG] != null -> {
-                // TODO: - index 조절 필요
-                val index = event["index"] as Int
-                val removeAt = adapter.list.removeAt(index) as ToDoItemDto
-                adapter.list.add(removeAt)
-                adapter.notifyDataSetChanged()
-            }
+                // TODO: - realm 적용하여 정렬 함수 만들 필요 있음
+                val itemIndex = event["index"] as Int
+                val completeIndex = adapter.list.indexOf(getString(R.string.add_item))
 
+                val removeAt = adapter.list.removeAt(itemIndex) as ToDoItemDto
+                adapter.notifyItemRemoved(itemIndex)
+
+                if (itemIndex < completeIndex) {
+                    adapter.list.add(removeAt)
+                } else {
+                    adapter.list.add(completeIndex, removeAt)
+                }
+
+                val index = adapter.list.indexOf(removeAt)
+                adapter.notifyItemInserted(index)
+//                adapter.notifyDataSetChanged()
+            }
             else -> {}
         }
 
