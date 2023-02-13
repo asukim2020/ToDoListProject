@@ -7,8 +7,9 @@ import com.asusoft.todolistproject.R
 import com.asusoft.todolistproject.application.ItemApplication
 import com.asusoft.todolistproject.databinding.ActivityToDoItemBinding
 import com.asusoft.todolistproject.eventbus.GlobalBus
+import com.asusoft.todolistproject.realm.ToDoItem
 import com.asusoft.todolistproject.realm.dto.ToDoItemDto
-import com.asusoft.todolistproject.recyclerview.RecyclerViewAdapter
+import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemAdapter
 import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemAddHolder
 import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemHolder
 import io.realm.Realm
@@ -21,7 +22,7 @@ class ToDoItemActivity : AppCompatActivity() {
     private lateinit var binding: ActivityToDoItemBinding
     private lateinit var realm: Realm
 
-    private lateinit var adapter: RecyclerViewAdapter
+    private lateinit var adapter: ToDoItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,12 +32,19 @@ class ToDoItemActivity : AppCompatActivity() {
         realm = Realm.getInstance(ItemApplication.getRealmConfig())
 
         val list = ArrayList<Any>()
-        list.add(ToDoItemDto("title", false))
-        list.add(ToDoItemDto("title", false))
-        list.add(ToDoItemDto("title", false))
+
+        val toDoItemList = ToDoItem.selectAll(realm)
+        val notCompleteList = toDoItemList.filter { !it.isComplete }
+        notCompleteList.sortedBy { it.order }
+        list.addAll(notCompleteList)
+
         list.add(getString(R.string.add_item))
 
-        adapter = RecyclerViewAdapter(this, list)
+        val completeList = toDoItemList.filter { it.isComplete }
+        completeList.sortedBy { it.order }
+        list.addAll(completeList)
+
+        adapter = ToDoItemAdapter(list)
         binding.recyclerView.layoutManager = LinearLayoutManager(baseContext)
         binding.recyclerView.adapter = adapter
     }
@@ -60,30 +68,15 @@ class ToDoItemActivity : AppCompatActivity() {
     public fun onEvent(event: HashMap<String, Any>) {
 
         when {
-            event[ToDoItemAddHolder.TAG] != null -> {
-                val index = adapter.list.indexOf(getString(R.string.add_item))
-                adapter.list.add(index, ToDoItemDto("title", false))
-                adapter.notifyItemInserted(index)
-            }
+            event[ToDoItemAddHolder.TAG] != null -> adapter.addItem(realm, baseContext)
 
             event[ToDoItemHolder.TAG] != null -> {
-                // TODO: - realm 적용하여 정렬 함수 만들 필요 있음
-                val itemIndex = event["index"] as Int
-                val completeIndex = adapter.list.indexOf(getString(R.string.add_item))
-
-                val removeAt = adapter.list.removeAt(itemIndex) as ToDoItemDto
-                adapter.notifyItemRemoved(itemIndex)
-
-                if (itemIndex < completeIndex) {
-                    adapter.list.add(removeAt)
-                } else {
-                    adapter.list.add(completeIndex, removeAt)
+                when {
+                    event["isComplete"] != null -> adapter.updateIsComplete(realm, baseContext, event)
+                    event["title"] != null -> adapter.updateTitle(realm, event)
                 }
-
-                val index = adapter.list.indexOf(removeAt)
-                adapter.notifyItemInserted(index)
-//                adapter.notifyDataSetChanged()
             }
+
             else -> {}
         }
 

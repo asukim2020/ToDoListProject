@@ -12,7 +12,7 @@ class ToDoItemAddHolder(
     private val view: View
 ): RecyclerView.ViewHolder(view), ViewHolderInterface {
     companion object {
-        var TAG = ToDoItemAddHolder::class.java.simpleName ?: "ToDoItemAddHolder"
+        val TAG = ToDoItemAddHolder::class.java.simpleName ?: "ToDoItemAddHolder"
     }
 
     override fun bind(item: Any) {

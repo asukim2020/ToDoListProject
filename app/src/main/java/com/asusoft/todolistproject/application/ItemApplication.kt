@@ -15,7 +15,7 @@ import io.realm.log.RealmLog
 class ItemApplication: Application() {
 
     companion object {
-        var TAG = ItemApplication::class.java.simpleName
+        val TAG = ItemApplication::class.java.simpleName ?: "ItemApplication"
         lateinit var instance: ItemApplication
         const val THROTTLE = 1000L
         const val CLICK_DELAY = 200L

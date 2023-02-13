@@ -11,7 +11,7 @@ import io.realm.Realm
 class HomeActivity : AppCompatActivity() {
 
     companion object {
-        var TAG = HomeActivity::class.java.simpleName ?: "HomeActivity"
+        val TAG = HomeActivity::class.java.simpleName ?: "HomeActivity"
     }
 
     private lateinit var binding: ActivityHomeBinding
