@@ -1,10 +1,10 @@
 package com.asusoft.todolistproject.recyclerview.todoitem
 
 import android.content.res.ColorStateList
+import android.graphics.Paint
 import android.util.Log
 import android.view.View
 import android.widget.CheckBox
-import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.asusoft.todolistproject.R
 import com.asusoft.todolistproject.application.ItemApplication
@@ -13,9 +13,6 @@ import com.asusoft.todolistproject.eventbus.GlobalBus
 import com.asusoft.todolistproject.extension.onClick
 import com.asusoft.todolistproject.realm.dto.ToDoItemDto
 import com.asusoft.todolistproject.recyclerview.ViewHolderInterface
-import com.jakewharton.rxbinding4.widget.textChanges
-import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 
 class ToDoItemHolder(
     private val view: View
@@ -29,6 +26,8 @@ class ToDoItemHolder(
 
         // TODO: - 체크박스 컬러 조정하기
         val checkBox = view.findViewById<CheckBox>(R.id.checkbox)
+        val editText = view.findViewById<RecyclerEditText>(R.id.title)
+
         checkBox.isChecked = dto.isComplete
         checkBox.onClick {
             dto.isComplete = !dto.isComplete
@@ -37,14 +36,16 @@ class ToDoItemHolder(
 
         val states = arrayOf(intArrayOf(android.R.attr.state_enabled))
         val colors: IntArray = if (checkBox.isChecked) {
+            editText.setTextColor(ItemApplication.getColor(R.color.lightFont))
+            editText.paintFlags = editText.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             intArrayOf(ItemApplication.getColor(R.color.lightFont))
         } else {
+            editText.setTextColor(ItemApplication.getColor(R.color.font))
+            editText.paintFlags = 0
             intArrayOf(ItemApplication.getColor(R.color.lightGray))
         }
         checkBox.buttonTintList = ColorStateList(states, colors)
 
-        // TODO: - 완료시 취소선 추가하기
-        val editText = view.findViewById<RecyclerEditText>(R.id.title)
         editText.clearTextChangedListeners()
         editText.setText(dto.title)
         editText.addTextChangedListener(dto.textWatcher)
