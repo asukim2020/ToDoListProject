@@ -2,12 +2,14 @@ package com.asusoft.todolistproject.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.asusoft.todolistproject.R
 import com.asusoft.todolistproject.application.ItemApplication
 import com.asusoft.todolistproject.databinding.ActivityToDoItemBinding
 import com.asusoft.todolistproject.eventbus.GlobalBus
+import com.asusoft.todolistproject.extension.settingActionBar
 import com.asusoft.todolistproject.realm.ToDoItem
 import com.asusoft.todolistproject.realm.dto.ToDoItemDto
 import com.asusoft.todolistproject.recyclerview.helper.ItemTouchHelperCallback
@@ -30,6 +32,8 @@ class ToDoItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityToDoItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        settingActionBar()
 
         realm = Realm.getInstance(ItemApplication.getRealmConfig())
 
@@ -58,6 +62,13 @@ class ToDoItemActivity : AppCompatActivity() {
         realm.close()
     }
 
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        when(menuItem.itemId) {
+            android.R.id.home -> finish()
+        }
+        return super.onOptionsItemSelected(menuItem)
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun onEvent(event: HashMap<String, Any>) {
 
@@ -71,7 +82,7 @@ class ToDoItemActivity : AppCompatActivity() {
                 }
             }
 
-            event[ToDoItemAdapter.TAG] != null ->{
+            event[ToDoItemAdapter.TAG] != null -> {
                 when {
                     event[ItemTouchHelperCallback.ON_ITEM_DISMISS] != null -> {
                         (event["dto"] as ToDoItemDto).delete(realm)

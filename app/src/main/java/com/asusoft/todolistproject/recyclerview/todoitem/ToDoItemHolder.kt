@@ -1,11 +1,13 @@
 package com.asusoft.todolistproject.recyclerview.todoitem
 
+import android.content.res.ColorStateList
 import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.asusoft.todolistproject.R
+import com.asusoft.todolistproject.application.ItemApplication
 import com.asusoft.todolistproject.customview.RecyclerEditText
 import com.asusoft.todolistproject.eventbus.GlobalBus
 import com.asusoft.todolistproject.extension.onClick
@@ -32,6 +34,14 @@ class ToDoItemHolder(
             dto.isComplete = !dto.isComplete
             postIsComplete(dto)
         }
+
+        val states = arrayOf(intArrayOf(android.R.attr.state_enabled))
+        val colors: IntArray = if (checkBox.isChecked) {
+            intArrayOf(ItemApplication.getColor(R.color.lightFont))
+        } else {
+            intArrayOf(ItemApplication.getColor(R.color.lightGray))
+        }
+        checkBox.buttonTintList = ColorStateList(states, colors)
 
         // TODO: - 완료시 취소선 추가하기
         val editText = view.findViewById<RecyclerEditText>(R.id.title)
