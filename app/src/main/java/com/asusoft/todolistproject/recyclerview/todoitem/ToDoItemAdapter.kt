@@ -13,9 +13,9 @@ import com.asusoft.todolistproject.recyclerview.ViewHolderInterface
 import io.realm.Realm
 import java.util.HashMap
 
-class ToDoItemAdapter(
-    var list: ArrayList<Any>
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    var list: ArrayList<Any> = ArrayList<Any>()
 
     companion object {
         val TAG = ToDoItemAdapter::class.java.simpleName ?: "ToDoItemAdapter"
@@ -28,7 +28,7 @@ class ToDoItemAdapter(
         when (viewType) {
             ToDoItemType.ITEM.value -> {
                 val view = inflater.inflate(R.layout.item_to_do_default, parent, false)
-                return ToDoItemHolder(view)
+                return ToDoItemHolder(view, this)
             }
             ToDoItemType.ADD.value -> {
                 val view = inflater.inflate(R.layout.item_to_do_add, parent, false)
@@ -60,6 +60,19 @@ class ToDoItemAdapter(
             is String -> ToDoItemType.ADD.value
             else -> 999
         }
+    }
+
+    fun initItem(realm: Realm, context: Context) {
+        val toDoItemList = ToDoItem.selectAll(realm)
+        val notCompleteList = toDoItemList.filter { !it.isComplete }
+        notCompleteList.sortedBy { it.order }
+        list.addAll(notCompleteList)
+
+        list.add(context.getString(R.string.add_item))
+
+        val completeList = toDoItemList.filter { it.isComplete }
+        completeList.sortedBy { it.order }
+        list.addAll(completeList)
     }
 
     fun addItem(realm: Realm, context: Context) {

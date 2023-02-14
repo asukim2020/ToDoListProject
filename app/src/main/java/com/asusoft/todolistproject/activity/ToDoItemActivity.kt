@@ -31,20 +31,8 @@ class ToDoItemActivity : AppCompatActivity() {
 
         realm = Realm.getInstance(ItemApplication.getRealmConfig())
 
-        val list = ArrayList<Any>()
-
-        val toDoItemList = ToDoItem.selectAll(realm)
-        val notCompleteList = toDoItemList.filter { !it.isComplete }
-        notCompleteList.sortedBy { it.order }
-        list.addAll(notCompleteList)
-
-        list.add(getString(R.string.add_item))
-
-        val completeList = toDoItemList.filter { it.isComplete }
-        completeList.sortedBy { it.order }
-        list.addAll(completeList)
-
-        adapter = ToDoItemAdapter(list)
+        adapter = ToDoItemAdapter()
+        adapter.initItem(realm, baseContext)
         binding.recyclerView.layoutManager = LinearLayoutManager(baseContext)
         binding.recyclerView.adapter = adapter
     }

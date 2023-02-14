@@ -15,7 +15,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class ToDoItemHolder(
-    private val view: View
+    private val view: View,
+    private val adapter: ToDoItemAdapter
 ): RecyclerView.ViewHolder(view), ViewHolderInterface {
     companion object {
         val TAG = ToDoItemHolder::class.java.simpleName ?: "ToDoItemHolder"
@@ -33,16 +34,14 @@ class ToDoItemHolder(
         }
 
         // TODO: - 완료시 취소선 추가하기
-        // TODO: - recyclerview edit text 이슈 해결하기 change event 삭제 등록 필요 - datalogger 앱 참고
         val editText = view.findViewById<EditText>(R.id.title)
-        editText.setText(dto.title)
-        editText.textChanges()
-            .debounce(0, TimeUnit.MILLISECONDS)
-            .subscribeOn(Schedulers.io())
-            .subscribe { charSequence ->
-                dto.title = charSequence.toString()
-                postTitle(dto)
+        for (toDoItem in adapter.list) {
+            if (toDoItem is ToDoItemDto) {
+                editText.removeTextChangedListener(toDoItem.textWatcher)
             }
+        }
+        editText.setText(dto.title)
+        editText.addTextChangedListener(dto.textWatcher)
 
         // TODO: - 포커스 기능 추가하기
         if (dto.addFlag) {
@@ -57,15 +56,6 @@ class ToDoItemHolder(
         map[TAG] = TAG
         map[ToDoItemDto.IS_COMPLETE] = dto.isComplete
         map["index"] = adapterPosition
-        map["dto"] = dto
-        GlobalBus.post(map)
-    }
-
-    private fun postTitle(dto: ToDoItemDto) {
-        Log.d(TAG, "postTitle()")
-        val map = HashMap<String, Any>()
-        map[TAG] = TAG
-        map[ToDoItemDto.TITLE] = dto.title
         map["dto"] = dto
         GlobalBus.post(map)
     }
