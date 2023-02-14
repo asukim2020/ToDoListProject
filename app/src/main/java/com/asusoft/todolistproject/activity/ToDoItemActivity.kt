@@ -2,13 +2,18 @@ package com.asusoft.todolistproject.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.asusoft.todolistproject.R
 import com.asusoft.todolistproject.application.ItemApplication
+import com.asusoft.todolistproject.customview.RecyclerEditText
 import com.asusoft.todolistproject.databinding.ActivityToDoItemBinding
 import com.asusoft.todolistproject.eventbus.GlobalBus
+import com.asusoft.todolistproject.extension.setOrientationPortraitOnly
 import com.asusoft.todolistproject.extension.settingActionBar
 import com.asusoft.todolistproject.realm.ToDoItem
 import com.asusoft.todolistproject.realm.dto.ToDoItemDto
@@ -34,6 +39,7 @@ class ToDoItemActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         settingActionBar()
+        setOrientationPortraitOnly()
 
         realm = Realm.getInstance(ItemApplication.getRealmConfig())
 
@@ -77,8 +83,14 @@ class ToDoItemActivity : AppCompatActivity() {
 
             event[ToDoItemHolder.TAG] != null -> {
                 when {
-                    event["isComplete"] != null -> adapter.updateIsComplete(realm, baseContext, event)
-                    event["title"] != null -> adapter.updateTitle(realm, event)
+                    event[ToDoItemDto.IS_COMPLETE] != null -> adapter.updateIsComplete(realm, baseContext, event)
+                    event[ToDoItemDto.TITLE] != null -> adapter.updateTitle(realm, event)
+                    event[ToDoItemDto.ADD_FLAG] != null -> {
+                        val imm: InputMethodManager? = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+                        Log.d(ToDoItemHolder.TAG, "addFlag true imm: $imm")
+                        val editText = event["editText"] as? RecyclerEditText ?: return
+                        imm?.showSoftInput(editText,0)
+                    }
                 }
             }
 

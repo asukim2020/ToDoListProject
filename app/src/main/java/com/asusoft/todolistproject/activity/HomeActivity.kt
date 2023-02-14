@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import com.asusoft.todolistproject.application.ItemApplication
 import com.asusoft.todolistproject.databinding.ActivityHomeBinding
+import com.asusoft.todolistproject.extension.setOrientationPortraitOnly
 import io.realm.Realm
 
 class HomeActivity : AppCompatActivity() {
@@ -22,6 +23,8 @@ class HomeActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate()")
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setOrientationPortraitOnly()
 
         realm = Realm.getInstance(ItemApplication.getRealmConfig())
 

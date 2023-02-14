@@ -90,7 +90,7 @@ class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemT
 
         val dto = ToDoItem.create(realm, "")
         dto.addFlag = true
-        list.add(index, ToDoItem.create(realm, ""))
+        list.add(index, dto)
         notifyItemInserted(index)
     }
 

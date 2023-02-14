@@ -2,6 +2,8 @@ package com.asusoft.todolistproject.extension
 
 import android.animation.ObjectAnimator
 import android.animation.StateListAnimator
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.asusoft.todolistproject.R
@@ -26,4 +28,11 @@ fun AppCompatActivity.settingActionBar() {
         )
     )
     appBarLayout.stateListAnimator = stateListAnimator
+}
+
+
+fun Activity.setOrientationPortraitOnly() {
+    if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
 }

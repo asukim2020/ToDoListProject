@@ -51,5 +51,6 @@ class ToDoItemDto(
       const val TITLE = "title"
       const val IS_COMPLETE = "isComplete"
       const val ORDER = "order"
+      const val ADD_FLAG = "addFlag"
    }
 }
