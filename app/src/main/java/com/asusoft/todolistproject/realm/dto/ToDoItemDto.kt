@@ -43,6 +43,10 @@ class ToDoItemDto(
       ToDoItem.updateOrder(realm, this)
    }
 
+   fun delete(realm: Realm) {
+      ToDoItem.delete(realm, this)
+   }
+
    companion object {
       const val TITLE = "title"
       const val IS_COMPLETE = "isComplete"

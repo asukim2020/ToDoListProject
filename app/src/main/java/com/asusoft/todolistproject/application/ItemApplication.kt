@@ -35,6 +35,10 @@ class ItemApplication: Application() {
 //                    .build()
         }
 
+        fun getString(id: Int): String {
+            return getContext().getString(id)
+        }
+
         fun getColor(id: Int): Int {
             return ContextCompat.getColor(getContext(), id)
         }

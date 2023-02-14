@@ -2,6 +2,7 @@ package com.asusoft.todolistproject.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.asusoft.todolistproject.R
 import com.asusoft.todolistproject.application.ItemApplication
@@ -9,6 +10,7 @@ import com.asusoft.todolistproject.databinding.ActivityToDoItemBinding
 import com.asusoft.todolistproject.eventbus.GlobalBus
 import com.asusoft.todolistproject.realm.ToDoItem
 import com.asusoft.todolistproject.realm.dto.ToDoItemDto
+import com.asusoft.todolistproject.recyclerview.helper.ItemTouchHelperCallback
 import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemAdapter
 import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemAddHolder
 import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemHolder
@@ -35,6 +37,10 @@ class ToDoItemActivity : AppCompatActivity() {
         adapter.initItem(realm, baseContext)
         binding.recyclerView.layoutManager = LinearLayoutManager(baseContext)
         binding.recyclerView.adapter = adapter
+
+        val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
+        val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        touchHelper.attachToRecyclerView(binding.recyclerView)
     }
 
     override fun onStart() {
@@ -62,6 +68,14 @@ class ToDoItemActivity : AppCompatActivity() {
                 when {
                     event["isComplete"] != null -> adapter.updateIsComplete(realm, baseContext, event)
                     event["title"] != null -> adapter.updateTitle(realm, event)
+                }
+            }
+
+            event[ToDoItemAdapter.TAG] != null ->{
+                when {
+                    event[ItemTouchHelperCallback.ON_ITEM_DISMISS] != null -> {
+                        (event["dto"] as ToDoItemDto).delete(realm)
+                    }
                 }
             }
 

@@ -6,14 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.asusoft.todolistproject.R
+import com.asusoft.todolistproject.application.ItemApplication
+import com.asusoft.todolistproject.eventbus.GlobalBus
 import com.asusoft.todolistproject.realm.ToDoItem
 import com.asusoft.todolistproject.realm.dto.ToDoItemDto
 import com.asusoft.todolistproject.recyclerview.EmptyViewHolder
 import com.asusoft.todolistproject.recyclerview.ViewHolderInterface
+import com.asusoft.todolistproject.recyclerview.helper.ItemTouchHelperCallback
+import com.asusoft.todolistproject.recyclerview.helper.ItemTouchHelperCallback.Companion.ON_ITEM_DISMISS
 import io.realm.Realm
 import java.util.HashMap
 
-class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemTouchHelperCallback.ItemTouchHelperAdapter {
 
     var list: ArrayList<Any> = ArrayList<Any>()
 
@@ -128,5 +132,24 @@ class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun updateTitle(realm: Realm, event: HashMap<String, Any>) {
         val dto = event["dto"] as ToDoItemDto
         dto.updateTitle(realm)
+    }
+
+    override fun onItemMoved(fromPosition: Int, toPosition: Int) {
+        // nothing
+    }
+
+    override fun onItemDismiss(position: Int) {
+        if (list.indexOf(ItemApplication.getString(R.string.add_item)) == position) return
+
+        val removeAt = list.removeAt(position)
+        notifyItemRemoved(position)
+
+        if (removeAt is ToDoItemDto) {
+            val map = HashMap<String, Any>()
+            map[TAG] = TAG
+            map[ON_ITEM_DISMISS] = ON_ITEM_DISMISS
+            map["dto"] = removeAt
+            GlobalBus.post(map)
+        }
     }
 }
