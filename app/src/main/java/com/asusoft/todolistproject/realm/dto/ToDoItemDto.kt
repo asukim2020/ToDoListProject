@@ -20,11 +20,11 @@ class ToDoItemDto(
       override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
       override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
          title = s.toString()
-         Log.d(ToDoItemHolder.TAG, "postTitle()")
+//         Log.d(ToDoItemHolder.TAG, "postTitle()")
          val map = HashMap<String, Any>()
          map[ToDoItemHolder.TAG] = ToDoItemHolder.TAG
          map[TITLE] = title
-         map["dto"] = this
+         map["dto"] = this@ToDoItemDto
          GlobalBus.post(map)
       }
 

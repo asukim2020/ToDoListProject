@@ -91,25 +91,38 @@ class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun updateIsComplete(realm: Realm, context: Context, event: HashMap<String, Any>) {
-        // TODO: - realm 적용하여 order 기준으로 정렬 함수 만들 필요 있음
         val itemIndex = event["index"] as Int
         val dto = event["dto"] as ToDoItemDto
-        val completeIndex = list.indexOf(context.getString(R.string.add_item))
 
         val removeAt = list.removeAt(itemIndex) as ToDoItemDto
         notifyItemRemoved(itemIndex)
 
-        if (itemIndex < completeIndex) {
-            list.add(removeAt)
-        } else {
-            list.add(completeIndex, removeAt)
+        val insertIndex = getCompleteChangeIndex(context, dto, dto.isComplete)
+        list.add(insertIndex, removeAt)
+        notifyItemInserted(insertIndex)
+        dto.updateIsComplete(realm)
+    }
+
+    private fun getCompleteChangeIndex(context: Context, dto: ToDoItemDto, isComplete: Boolean): Int {
+        val itemList = ArrayList<ToDoItemDto>()
+
+        for (item in list) {
+            if (item is ToDoItemDto) {
+                if (item.isComplete == isComplete)
+                    itemList.add(item)
+            }
         }
 
-        val index = list.indexOf(removeAt)
-        notifyItemInserted(index)
-//        notifyDataSetChanged()
+        var index = 0
+        for (item in itemList) {
+            if (item.order < dto.order)
+                index++
+        }
 
-        dto.updateIsComplete(realm)
+        if (isComplete)
+            index += list.indexOf(context.getString(R.string.add_item)) + 1
+
+        return index
     }
 
     fun updateTitle(realm: Realm, event: HashMap<String, Any>) {

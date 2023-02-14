@@ -57,6 +57,7 @@ open class ToDoItem: RealmModel {
         }
 
         fun updateTitle(realm: Realm, dto: ToDoItemDto) {
+//            Log.d(TAG, "updateTitle title: " + dto.title)
             realm.beginTransaction()
             val item = realm.where(ToDoItem::class.java).equalTo("key", dto.key).findFirst()
             item?.title = dto.title
