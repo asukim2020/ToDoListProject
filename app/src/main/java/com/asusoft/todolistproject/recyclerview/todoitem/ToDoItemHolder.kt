@@ -6,6 +6,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.asusoft.todolistproject.R
+import com.asusoft.todolistproject.customview.RecyclerEditText
 import com.asusoft.todolistproject.eventbus.GlobalBus
 import com.asusoft.todolistproject.extension.onClick
 import com.asusoft.todolistproject.realm.dto.ToDoItemDto
@@ -15,8 +16,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class ToDoItemHolder(
-    private val view: View,
-    private val adapter: ToDoItemAdapter
+    private val view: View
 ): RecyclerView.ViewHolder(view), ViewHolderInterface {
     companion object {
         val TAG = ToDoItemHolder::class.java.simpleName ?: "ToDoItemHolder"
@@ -34,12 +34,8 @@ class ToDoItemHolder(
         }
 
         // TODO: - 완료시 취소선 추가하기
-        val editText = view.findViewById<EditText>(R.id.title)
-        for (toDoItem in adapter.list) {
-            if (toDoItem is ToDoItemDto) {
-                editText.removeTextChangedListener(toDoItem.textWatcher)
-            }
-        }
+        val editText = view.findViewById<RecyclerEditText>(R.id.title)
+        editText.clearTextChangedListeners()
         editText.setText(dto.title)
         editText.addTextChangedListener(dto.textWatcher)
 

@@ -28,7 +28,7 @@ class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         when (viewType) {
             ToDoItemType.ITEM.value -> {
                 val view = inflater.inflate(R.layout.item_to_do_default, parent, false)
-                return ToDoItemHolder(view, this)
+                return ToDoItemHolder(view)
             }
             ToDoItemType.ADD.value -> {
                 val view = inflater.inflate(R.layout.item_to_do_add, parent, false)
