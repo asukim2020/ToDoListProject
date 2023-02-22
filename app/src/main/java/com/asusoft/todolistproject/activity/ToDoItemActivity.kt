@@ -19,6 +19,7 @@ import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemAdapter
 import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemAddHolder
 import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemHolder
 import io.realm.Realm
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.HashMap
@@ -86,7 +87,13 @@ class ToDoItemActivity : AppCompatActivity() {
                         val imm: InputMethodManager? = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
                         Log.d(ToDoItemHolder.TAG, "addFlag true imm: $imm")
                         val editText = event["editText"] as? RecyclerEditText ?: return
-                        imm?.showSoftInput(editText,0)
+                        editText.isFocusable = true
+                        editText.requestFocus()
+
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(300L)
+                            imm?.showSoftInput(editText,0)
+                        }
                     }
                 }
             }

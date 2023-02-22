@@ -55,8 +55,6 @@ class ToDoItemHolder(
         // TODO: - 포커스 기능 추가하기
         if (dto.addFlag) {
             Log.d(TAG, "addFlag true index: $bindingAdapterPosition")
-            editText.isFocusable = true
-            editText.requestFocus()
             postShowKeyboard(dto, editText)
         }
     }
