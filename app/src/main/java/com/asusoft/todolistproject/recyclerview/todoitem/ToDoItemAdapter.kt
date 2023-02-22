@@ -1,6 +1,7 @@
 package com.asusoft.todolistproject.recyclerview.todoitem
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,8 @@ import com.asusoft.todolistproject.realm.dto.ToDoItemDto
 import com.asusoft.todolistproject.recyclerview.EmptyViewHolder
 import com.asusoft.todolistproject.recyclerview.ViewHolderInterface
 import com.asusoft.todolistproject.recyclerview.helper.ItemTouchHelperCallback
-import com.asusoft.todolistproject.recyclerview.helper.ItemTouchHelperCallback.Companion.ON_ITEM_DISMISS
+import com.asusoft.todolistproject.recyclerview.helper.ItemTouchHelperCallback.Companion.ON_ITEM_DELETE
+import com.asusoft.todolistproject.recyclerview.helper.ItemTouchHelperCallback.Companion.ON_ITEM_MOVE
 import io.realm.Realm
 import java.util.HashMap
 
@@ -69,13 +71,11 @@ class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemT
     fun initItem(realm: Realm, context: Context) {
         val toDoItemList = ToDoItem.selectAll(realm)
         val notCompleteList = toDoItemList.filter { !it.isComplete }
-        notCompleteList.sortedBy { it.order }
         list.addAll(notCompleteList)
 
         list.add(context.getString(R.string.add_item))
 
         val completeList = toDoItemList.filter { it.isComplete }
-        completeList.sortedBy { it.order }
         list.addAll(completeList)
     }
 
@@ -134,8 +134,40 @@ class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemT
         dto.updateTitle(realm)
     }
 
+    fun swapItems(realm: Realm, fromPosition: Int, toPosition: Int) {
+        val item = list.removeAt(fromPosition)
+        list.add(toPosition, item)
+
+        notifyItemMoved(fromPosition, toPosition)
+        notifyItemChanged(fromPosition)
+        notifyItemChanged(toPosition)
+
+        val fromItem = list[fromPosition]
+        val toItem = list[toPosition]
+
+        if (!(fromItem is ToDoItemDto && toItem is ToDoItemDto)) return
+
+        Log.d(TAG, "before from: " + fromItem.title + " to: " + toItem.title)
+
+        val fromOrder = fromItem.order
+        fromItem.order = toItem.order
+        toItem.order = fromOrder
+
+        fromItem.updateOrder(realm)
+        toItem.updateOrder(realm)
+
+        Log.d(TAG, "after from: " + fromItem.title + " to: " + toItem.title)
+    }
+
     override fun onItemMoved(fromPosition: Int, toPosition: Int) {
-        // nothing
+        if (fromPosition == toPosition) return
+
+        val map = HashMap<String, Any>()
+        map[TAG] = TAG
+        map[ON_ITEM_MOVE] = ON_ITEM_MOVE
+        map["fromPosition"] = fromPosition
+        map["toPosition"] = toPosition
+        GlobalBus.post(map)
     }
 
     override fun onItemDismiss(position: Int) {
@@ -147,7 +179,7 @@ class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemT
         if (removeAt is ToDoItemDto) {
             val map = HashMap<String, Any>()
             map[TAG] = TAG
-            map[ON_ITEM_DISMISS] = ON_ITEM_DISMISS
+            map[ON_ITEM_DELETE] = ON_ITEM_DELETE
             map["dto"] = removeAt
             GlobalBus.post(map)
         }

@@ -4,18 +4,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.asusoft.todolistproject.R
 import com.asusoft.todolistproject.application.ItemApplication
 import com.asusoft.todolistproject.customview.RecyclerEditText
 import com.asusoft.todolistproject.databinding.ActivityToDoItemBinding
 import com.asusoft.todolistproject.eventbus.GlobalBus
 import com.asusoft.todolistproject.extension.setOrientationPortraitOnly
 import com.asusoft.todolistproject.extension.settingActionBar
-import com.asusoft.todolistproject.realm.ToDoItem
 import com.asusoft.todolistproject.realm.dto.ToDoItemDto
 import com.asusoft.todolistproject.recyclerview.helper.ItemTouchHelperCallback
 import com.asusoft.todolistproject.recyclerview.todoitem.ToDoItemAdapter
@@ -96,8 +93,14 @@ class ToDoItemActivity : AppCompatActivity() {
 
             event[ToDoItemAdapter.TAG] != null -> {
                 when {
-                    event[ItemTouchHelperCallback.ON_ITEM_DISMISS] != null -> {
+                    event[ItemTouchHelperCallback.ON_ITEM_DELETE] != null -> {
                         (event["dto"] as ToDoItemDto).delete(realm)
+                    }
+
+                    event[ItemTouchHelperCallback.ON_ITEM_MOVE] != null -> {
+                        val fromPosition = event["fromPosition"] as Int
+                        val toPosition = event["toPosition"] as Int
+                        adapter.swapItems(realm, fromPosition, toPosition)
                     }
                 }
             }

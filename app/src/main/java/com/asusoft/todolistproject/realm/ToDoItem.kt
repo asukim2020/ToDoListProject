@@ -5,6 +5,7 @@ import com.asusoft.todolistproject.realm.dto.ToDoItemDto
 import io.realm.Realm
 import io.realm.RealmModel
 import io.realm.RealmObject
+import io.realm.Sort
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 import io.realm.kotlin.deleteFromRealm
@@ -50,7 +51,9 @@ open class ToDoItem: RealmModel {
 
         fun selectAll(realm: Realm): List<ToDoItemDto> {
             realm.beginTransaction()
-            val itemList = realm.where(ToDoItem::class.java).findAll()
+            val itemList = realm.where(ToDoItem::class.java)
+                .sort("order", Sort.ASCENDING)
+                .findAll()
             Log.d(TAG, "selectAll count: " + itemList.count())
             realm.commitTransaction()
             return itemList.map { it.getDto() }

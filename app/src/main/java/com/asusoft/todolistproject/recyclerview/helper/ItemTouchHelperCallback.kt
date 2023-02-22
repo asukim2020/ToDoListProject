@@ -11,7 +11,7 @@ class ItemTouchHelperCallback(val adapter: ItemTouchHelperAdapter) : ItemTouchHe
 
     companion object {
         val TAG = ItemTouchHelperCallback::class.java.simpleName ?: "ItemTouchHelperCallback"
-        const val ON_ITEM_DISMISS = "onItemDismiss"
+        const val ON_ITEM_DELETE = "onItemDelete"
         const val ON_ITEM_MOVE = "onItemMoved"
     }
 

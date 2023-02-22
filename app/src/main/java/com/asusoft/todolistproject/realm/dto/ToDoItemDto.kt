@@ -47,6 +47,11 @@ class ToDoItemDto(
       ToDoItem.delete(realm, this)
    }
 
+   override fun toString(): String {
+      return "ToDoItemDto(key=$key, title='$title', isComplete=$isComplete, order=$order, addFlag=$addFlag, textWatcher=$textWatcher)"
+   }
+
+
    companion object {
       const val TITLE = "title"
       const val IS_COMPLETE = "isComplete"
