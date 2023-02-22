@@ -70,6 +70,9 @@ class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemT
 
     fun initItem(realm: Realm, context: Context) {
         val toDoItemList = ToDoItem.selectAll(realm)
+        for (item in toDoItemList) {
+            Log.d(TAG, item.toString())
+        }
         val notCompleteList = toDoItemList.filter { !it.isComplete }
         list.addAll(notCompleteList)
 
@@ -146,6 +149,7 @@ class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemT
         val toItem = list[toPosition]
 
         if (!(fromItem is ToDoItemDto && toItem is ToDoItemDto)) return
+        if (fromItem.order == toItem.order) return
 
         Log.d(TAG, "before from: " + fromItem.title + " to: " + toItem.title)
 
@@ -160,8 +164,6 @@ class ToDoItemAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemT
     }
 
     override fun onItemMoved(fromPosition: Int, toPosition: Int) {
-        if (fromPosition == toPosition) return
-
         val map = HashMap<String, Any>()
         map[TAG] = TAG
         map[ON_ITEM_MOVE] = ON_ITEM_MOVE
