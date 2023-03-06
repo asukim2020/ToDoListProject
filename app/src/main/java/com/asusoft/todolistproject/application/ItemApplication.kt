@@ -23,7 +23,7 @@ class ItemApplication: Application() {
         private fun getContext(): Context {
             return instance.baseContext
         }
-
+//
         fun getRealmConfig(): RealmConfiguration {
             return RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
