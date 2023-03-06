@@ -19,7 +19,7 @@ class ItemApplication: Application() {
         lateinit var instance: ItemApplication
         const val THROTTLE = 1000L
         const val CLICK_DELAY = 200L
-
+//
         private fun getContext(): Context {
             return instance.baseContext
         }
